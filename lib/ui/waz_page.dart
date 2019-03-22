@@ -2,17 +2,8 @@ import 'package:banner_view/banner_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_wananzuo/common/http/waz_api.dart';
 import 'package:flutter_wananzuo/ui/article.dart';
-
-/*
-* home: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text("标题"),
-        ),
-        body:HomePage(),
-      ),
-*
-* */
+import 'package:flutter_wananzuo/ui/drawer_vew.dart';
+import 'package:toast/toast.dart';
 
 class WAZPage extends StatefulWidget{
   @override
@@ -27,29 +18,37 @@ class WAZState extends State<StatefulWidget>{
   @override
   void initState() {
     super.initState();
-    _getBanners();
-    _getArticles();
+    requestData();
   }
-  _getBanners()async{
+
+  requestData()async{
+    Iterable<Future> futures = [ _getBanners(), _getArticles()];
+    await Future.wait(futures);
+    setState(() {
+    });
+  }
+
+  _getBanners({bool update = false})async{
    var bans = await WAZApi.getBanners();
    if(bans != null ){
      banList.addAll(bans["data"]);
-     setState(() {
-
+     if(update){
+        setState(() {
      });
+     }
    }
   }
 
-  _getArticles()async{
+  _getArticles({bool update = false})async{
     var articles = await WAZApi.getArticles(pageNo);
     if(articles != null){
       var data = articles["data"];
       var datas =data["datas"];
-      articles.addAll(datas);
-
-      setState(() {
-
-      });
+      artList.addAll(datas);
+      if(update){
+        setState(() {
+        });
+      }
     }
   }
 
@@ -66,27 +65,27 @@ class WAZState extends State<StatefulWidget>{
     }
     return null;
   }
-
-
+  
   @override
   Widget build(BuildContext context) {
+
+    Widget diver = Divider(color: Colors.pink,);
+    Widget diver2 = Divider(color: Colors.yellow,);
+
     return Scaffold(
-        body: ListView.builder(
+      drawer: Drawer(
+        child:MainDrawer(),
+      ),
+      appBar: AppBar(title: Text("WAZ"),
+        centerTitle: true  ,
+          ),
+        body: ListView.separated(
+          separatorBuilder: (cxt,index){
+            return index %2 == 0?diver2 :diver;
+          },
           itemCount: artList.length +1,
           itemBuilder:(BuildContext cxt,int index){
             return _buildItem(index);
-       /*     if(index ==0){
-              return Container(
-                  height: 180,
-                  child:_bannerView()
-              );
-            }else{
-              return InkWell(
-                onTap: (){
-                },
-                child: Text("$index"),
-              );
-            }*/
           },
       )
     );
@@ -98,6 +97,9 @@ class WAZState extends State<StatefulWidget>{
       String filePath = item["imagePath"];
       print(filePath);
       return InkWell(
+       /* onTap: (){
+          Toast.show("click", context);
+        },*/
         child: Image.network(filePath,
           fit: BoxFit.cover,),
       );

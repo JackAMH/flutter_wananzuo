@@ -4,7 +4,7 @@ import 'package:flutter_wananzuo/common/http/http_manager.dart';
 class WAZApi{
   static const  BASE_URL ="https://www.wanandroid.com/";
   static const BANNERS ="banner/json";
-  static const ARTICLES ="article/list/";
+  static const ARTICLES ="article/list";
 
   static HttpManager _httpManager;
 

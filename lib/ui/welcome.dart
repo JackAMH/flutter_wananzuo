@@ -21,7 +21,7 @@ class WelcomeStat extends State<WelcomePage>{
 
   initAppData() async{
     Iterable<Future> future = [WAZApi.init(),
-    Future.delayed(Duration(seconds: 6))];// 等待6秒
+    Future.delayed(Duration(seconds: 3))];// 等待6秒
     await Future.wait(future);
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_){
       return WAZPage();
