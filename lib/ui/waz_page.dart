@@ -21,17 +21,23 @@ class WAZState extends State<StatefulWidget>{
     requestData();
   }
 
-  requestData()async{
-    Iterable<Future> futures = [ _getBanners(), _getArticles()];
-    await Future.wait(futures);
+  Future<void> requestData()async{
+    //Iterable<Future> futures = [ _getBanners(), _getArticles()];
+    //var response = await Future.wait(futures);
+    await _getArticles();
+    await _getBanners();
+    debugPrint("requestData...");
     setState(() {
     });
+    return null;
   }
 
-  _getBanners({bool update = false})async{
+  _getBanners({bool update = true})async{
+    debugPrint("_getBanners sr=tart...");
    var bans = await WAZApi.getBanners();
    if(bans != null ){
      banList.addAll(bans["data"]);
+     debugPrint("_getBanners finished...");
      if(update){
         setState(() {
      });
@@ -39,12 +45,14 @@ class WAZState extends State<StatefulWidget>{
    }
   }
 
-  _getArticles({bool update = false})async{
+  _getArticles({bool update = true})async{
+    debugPrint("_getArticles start...");
     var articles = await WAZApi.getArticles(pageNo);
     if(articles != null){
       var data = articles["data"];
       var datas =data["datas"];
       artList.addAll(datas);
+      debugPrint("_getArticles finished...");
       if(update){
         setState(() {
         });
@@ -107,29 +115,4 @@ class WAZState extends State<StatefulWidget>{
     return list.isNotEmpty? BannerView(list,intervalDuration: Duration(seconds: 4),
     ):null;
   }
-
-
-/*
-   return ListView.builder(
-        itemBuilder:(BuildContext cxt,int index){
-          return InkWell(
-            onTap: (){
-              Scaffold.of(context).showSnackBar(
-                SnackBar(content: Text("tab"))
-              );
-            },
-            child: ListTile(title: Text("$index"))
-          );
-        }
-    );
-ListView(
-  itemExtent: 100,
-  shrinkWrap: true,
-  padding: const EdgeInsets.all(20),
-  children: <Widget>[
-  Container(color:Colors.yellow,
-  child:const Text("hello"),),
-  const Text("hello"),
-  ],
-  );*/
 }

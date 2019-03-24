@@ -11,13 +11,11 @@ class HttpManager{
     }
     return _instance;
   }
-  HttpManager._inst(){
-
-  }
+  HttpManager._inst(){}
   initHttp()async{
     var options = BaseOptions(
         baseUrl: WAZApi.BASE_URL,
-        connectTimeout: 5000,
+        connectTimeout: 7000,
         receiveTimeout: 3000
     );
     _dio =Dio(options);
